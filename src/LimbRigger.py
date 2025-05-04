@@ -26,14 +26,14 @@ class LimbRigger: # Creates a class called LimbRigger
         except Exception as e: # Makes an exception for when it is not able to name three joints/when the wrong joint was selected
             raise Exception(f"Wrong Selection, Please select the first joint of the limb!") # Tells person that what they did was wrong and they need to try again
 
-    def CreateFKControllerForJoint(self, jntName): # Defines a function called CreateFKControllerForJoint with parameters self and jntName
-        ctrlName = "ac_l_fk_" + jntName # Creates a variable that combines ac_l_fk_ and whatever the joint is named
-        ctrlGrpName = ctrlName + "_grp" # Creates a variable that combines what is in the variable ctrlName plus _grp
-        mc.circle(name = ctrlName, radius = self.controllerSize, normal = (1, 0, 0)) # Creates a circle shaped controller
-        mc.group(ctrlName, n = ctrlGrpName) # Groups circle controller and names it the ctrlGrpName
-        mc.matchTransform(ctrlGrpName, jntName) # Matches the circle controller to the joint
-        mc.orientConstraint(ctrlName, jntName) # Constrains the circle controller to the joint
-        return ctrlName, ctrlGrpName # returns variables ctrlName and ctrlGrpName
+    def CreateFKControllerForJoint(self, jntName): 
+        ctrlName = "ac_l_fk_" + jntName 
+        ctrlGrpName = ctrlName + "_grp" 
+        mc.circle(name = ctrlName, radius = self.controllerSize, normal = (1, 0, 0)) 
+        mc.group(ctrlName, n = ctrlGrpName) 
+        mc.matchTransform(ctrlGrpName, jntName)
+        mc.orientConstraint(ctrlName, jntName)
+        return ctrlName, ctrlGrpName 
     
     def CreateBoxController(self, name):
         mel.eval(f"curve -n {name} -d 1 -p -0.5 0.5 0.5 -p 0.5 0.5 0.5 -p 0.5 -0.5 0.5 -p -0.5 -0.5 0.5 -p -0.5 0.5 0.5 -p -0.5 0.5 -0.5 -p -0.5 -0.5 -0.5 -p -0.5 -0.5 0.5 -p -0.5 -0.5 -0.5 -p 0.5 -0.5 -0.5 -p 0.5 -0.5 0.5 -p 0.5 0.5 0.5 -p 0.5 0.5 -0.5 -p 0.5 -0.5 -0.5 -p 0.5 0.5 -0.5 -p -0.5 0.5 -0.5 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 ;")
@@ -57,12 +57,12 @@ class LimbRigger: # Creates a class called LimbRigger
         print(f"<{vector.x}, {vector.y}, {vector.z}>")
     
     def RigLimb(self): # Defines a function called RigLimb with the parameter self
-        rootCtrl, rootCtrlGrp = self.CreateFKControllerForJoint(self.root) # Creates two variables that  use the FK controllers for the root joint
-        midCtrl, midCtrlGrp = self.CreateFKControllerForJoint(self.mid) # Creates two variables that  use the FK controllers for the mid joint
-        endCtrl, endCtrlGrp = self.CreateFKControllerForJoint(self.end) # Creates two variables that  use the FK controllers for the end joint
+        rootCtrl, rootCtrlGrp = self.CreateFKControllerForJoint(self.root) 
+        midCtrl, midCtrlGrp = self.CreateFKControllerForJoint(self.mid) 
+        endCtrl, endCtrlGrp = self.CreateFKControllerForJoint(self.end) 
 
-        mc.parent(midCtrlGrp, rootCtrl) # Parents the midCtrlGrp to the rootCtrl
-        mc.parent(endCtrlGrp, midCtrl) # Parents the endCtrlGrp to the midCtrl
+        mc.parent(midCtrlGrp, rootCtrl) 
+        mc.parent(endCtrlGrp, midCtrl) 
 
         ikEndCtrl = "ac_ik_" + self.end
         ikEndCtrl, ikEndCtrlGrp = self.CreateBoxController(ikEndCtrl)
@@ -132,23 +132,23 @@ class ColorPicker(QWidget):
 
 
 class LimbRiggerWidget(MayaWindow): # Creates a class called LimbRiggerWidget with parameter MayaWindow
-    def __init__(self): # Creates a constructor
-        super().__init__() # Calls to inherit from the parent class
-        self.rigger = LimbRigger() # Initializes rigger as being equal to class LimbRigger
+    def __init__(self): 
+        super().__init__() 
+        self.rigger = LimbRigger() 
         self.setWindowTitle("Limb Rigger")
-        self.masterLayout = QVBoxLayout() # Initializes masterLayout as being equal to QVBoxLayout
-        self.setLayout(self.masterLayout) # Sets layout to masterLayout
+        self.masterLayout = QVBoxLayout() 
+        self.setLayout(self.masterLayout) 
 
-        toolTipLabel = QLabel("Select the first joint of the limb, and press the auto find button") # Creates a label that tells the user what to do
-        self.masterLayout.addWidget(toolTipLabel) # Puts the label on the UI/Adds toolTipLabel to the Widget
+        toolTipLabel = QLabel("Select the first joint of the limb, and press the auto find button")
+        self.masterLayout.addWidget(toolTipLabel) 
 
-        self.jntsListLineEdit = QLineEdit() # Calls to QLineEdit
-        self.masterLayout.addWidget(self.jntsListLineEdit) # Adds jntsListLineEdit to the Widget
-        self.jntsListLineEdit.setEnabled(False) # Sets jntsListLineEdit to not be enabled
+        self.jntsListLineEdit = QLineEdit() 
+        self.masterLayout.addWidget(self.jntsListLineEdit) 
+        self.jntsListLineEdit.setEnabled(False) 
 
-        autoFindJntBtn = QPushButton("Auto Find") # Creates a button and puts the words Auto Find on it
-        autoFindJntBtn.clicked.connect(self.AutoFindJntButtonClicked) # When the button is clicked it calls the function AutoFindJntButtonClicked
-        self.masterLayout.addWidget(autoFindJntBtn) # Makes the UI of the button
+        autoFindJntBtn = QPushButton("Auto Find") 
+        autoFindJntBtn.clicked.connect(self.AutoFindJntButtonClicked) 
+        self.masterLayout.addWidget(autoFindJntBtn)
 
         ctrlSizeSlider = QSlider()
         ctrlSizeSlider.setOrientation(Qt.Horizontal)
@@ -175,9 +175,9 @@ class LimbRiggerWidget(MayaWindow): # Creates a class called LimbRiggerWidget wi
         setColorBtn.clicked.connect(self.SetColorBtnClicked)
         self.masterLayout.addWidget(setColorBtn)
 
-        rigLimbBtn = QPushButton("Rig Limb") # Creates a button with the words Rig Limb on it
-        rigLimbBtn.clicked.connect(lambda : self.rigger.RigLimb()) # When pushed the button calls to rigger which then gets the RigLimb function from within the class LimbRigger
-        self.masterLayout.addWidget(rigLimbBtn) # Adds button to the Widget/to the UI
+        rigLimbBtn = QPushButton("Rig Limb") 
+        rigLimbBtn.clicked.connect(lambda : self.rigger.RigLimb()) 
+        self.masterLayout.addWidget(rigLimbBtn) 
 
     def ColorPickerChanged(self, newColor: QColor):
         self.rigger.controllerColor[0] = newColor.redF()
@@ -200,16 +200,16 @@ class LimbRiggerWidget(MayaWindow): # Creates a class called LimbRiggerWidget wi
         self.ctrlSizeLabel.setText(f"{newValue}")
         self.rigger.controllerSize = newValue
 
-    def AutoFindJntButtonClicked(self): # Defines a function called AutoFindJntButtonClicked with the parameter self
-        try: # Tries to do what is below it
-            self.rigger.FindJointBasedOnSelection() # Uses rigger to use the function FindJointBasedOnSelection from the LimbRigger class
-            self.jntsListLineEdit.setText(f"{self.rigger.root},{self.rigger.mid}, {self.rigger.end}") # Sets the text line in the UI to be set to the name of the joints
-        except Exception as e: # Throws an exception when it cannot find the right joints/ when the wrong joints are selected
-            QMessageBox.critical(self, "Error", f"{e}") # Gives an error message
+    def AutoFindJntButtonClicked(self): 
+        try: 
+            self.rigger.FindJointBasedOnSelection() 
+            self.jntsListLineEdit.setText(f"{self.rigger.root},{self.rigger.mid}, {self.rigger.end}") 
+        except Exception as e: 
+            QMessageBox.critical(self, "Error", f"{e}") 
 
-limbRiggerWidget = LimbRiggerWidget() # Makes class LimbRiggerWidget equal to a variable
-limbRiggerWidget.show() # Displays limbRiggerWidget
+limbRiggerWidget = LimbRiggerWidget()
+limbRiggerWidget.show() 
 
-GetMayaMainWindow() # calls function GetMayaMainWindow
+GetMayaMainWindow() 
 
 # ALT + Shift + M to run in Maya
